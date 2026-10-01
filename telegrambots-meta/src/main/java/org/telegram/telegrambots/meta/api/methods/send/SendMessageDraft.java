@@ -1,0 +1,129 @@
+package org.telegram.telegrambots.meta.api.methods.send;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodBoolean;
+import org.telegram.telegrambots.meta.api.objects.MessageEntity;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiValidationException;
+
+import java.util.List;
+
+/**
+ * @author Ruben Bermudez
+ * @version 10.3
+ * Use this method to stream a partial message to a user while the message is being generated.
+ * Returns True on success.
+ */
+@SuppressWarnings("unused")
+@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+@Jacksonized
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class SendMessageDraft extends BotApiMethodBoolean {
+    public static final String PATH = "sendMessageDraft";
+
+    private static final String CHAT_ID_FIELD = "chat_id";
+    private static final String MESSAGE_THREAD_ID_FIELD = "message_thread_id";
+    private static final String DRAFT_ID_FIELD = "draft_id";
+    private static final String TEXT_FIELD = "text";
+    private static final String PARSE_MODE_FIELD = "parse_mode";
+    private static final String ENTITIES_FIELD = "entities";
+    private static final String CAN_STOP_FIELD = "can_stop";
+    private static final String KEEP_ON_STOP_FIELD = "keep_on_stop";
+
+    /**
+     * Unique identifier for the target private chat
+     */
+    @JsonProperty(CHAT_ID_FIELD)
+    @NonNull
+    private Long chatId;
+
+    /**
+     * Optional.
+     * Unique identifier for the target message thread
+     */
+    @JsonProperty(MESSAGE_THREAD_ID_FIELD)
+    private Integer messageThreadId;
+
+    /**
+     * Unique identifier of the message draft; must be non-zero.
+     * Changes of drafts with the same identifier are animated
+     */
+    @JsonProperty(DRAFT_ID_FIELD)
+    @NonNull
+    private Integer draftId;
+
+    /**
+     * Optional.
+     * Text of the message to be sent, 0-4096 characters after entities parsing.
+     * Pass an empty text to show a “Thinking…” placeholder.
+     */
+    @JsonProperty(TEXT_FIELD)
+    private String text;
+
+    /**
+     * Optional.
+     * Mode for parsing entities in the message text. See formatting options for more details.
+     */
+    @JsonProperty(PARSE_MODE_FIELD)
+    private String parseMode;
+
+    /**
+     * Optional.
+     * A JSON-serialized list of special entities that appear in message text,
+     * which can be specified instead of parse_mode
+     */
+    @JsonProperty(ENTITIES_FIELD)
+    private List<MessageEntity> entities;
+
+    /**
+     * Optional.
+     * Pass True to show the user a button to stop further drafts.
+     * The bot will receive an Update "stopped_message_generation" if the user presses the button.
+     */
+    @JsonProperty(CAN_STOP_FIELD)
+    private Boolean canStop;
+
+    /**
+     * Optional.
+     * Pass True to keep the draft in the chat when the button is pressed.
+     * The draft will still disappear after a short time or if the bot sends a message.
+     * To fully preserve the partial draft, the bot should send it as a new message.
+     */
+    @JsonProperty(KEEP_ON_STOP_FIELD)
+    private Boolean keepOnStop;
+
+    @Override
+    public String getMethod() {
+        return PATH;
+    }
+
+    @Override
+    public void validate() throws TelegramApiValidationException {
+        if (chatId == null || chatId == 0L) {
+            throw new TelegramApiValidationException("ChatId can't be empty", this);
+        }
+        if (draftId == null || draftId == 0) {
+            throw new TelegramApiValidationException("DraftId can't be empty and must be non-zero", this);
+        }
+        if (text != null && text.length() > 4096) {
+            throw new TelegramApiValidationException("Text can't be longer than 4096 characters", this);
+        }
+    }
+}

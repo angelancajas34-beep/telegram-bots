@@ -1,0 +1,139 @@
+package org.telegram.telegrambots.meta.api.objects;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.Singular;
+import lombok.ToString;
+import lombok.experimental.Tolerate;
+import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
+import org.telegram.telegrambots.meta.api.interfaces.Validable;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiValidationException;
+
+import java.util.List;
+
+/**
+ * Describes reply parameters for the message that is being sent.
+ * @author Ruben Bermudez
+ * @version 10.2
+ */
+@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ReplyParameters implements BotApiObject, Validable {
+    private static final String MESSAGE_ID_FIELD = "message_id";
+    private static final String EPHEMERAL_MESSAGE_ID_FIELD = "ephemeral_message_id";
+    private static final String CHAT_ID_FIELD = "chat_id";
+    private static final String ALLOW_SENDING_WITHOUT_REPLY_FIELD = "allow_sending_without_reply";
+    private static final String QUOTE_PARSE_MODE_FIELD = "quote_parse_mode";
+    private static final String QUOTE_FIELD = "quote";
+    private static final String QUOTE_ENTITIES_FIELD = "quote_entities";
+    private static final String QUOTE_POSITION_FIELD = "quote_position";
+    private static final String CHECKLIST_TASK_ID_FIELD = "checklist_task_id";
+    private static final String POLL_OPTION_ID_FIELD = "poll_option_id";
+
+    /**
+     * Optional.
+     * Identifier of the message that will be replied to in the current chat, or in the chat chat_id if it is specified
+     * @apiNote Required if ephemeralMessageId isn't specified.
+     */
+    @JsonProperty(MESSAGE_ID_FIELD)
+    private Integer messageId;
+    /**
+     * Optional.
+     * Identifier of the incoming ephemeral message that will be replied to in the current chat.
+     * A reply to an ephemeral message must itself be an ephemeral message.
+     * An ephemeral message may only be replied to within 15 seconds of being sent.
+     * @apiNote Required if messageId isn't specified.
+     */
+    @JsonProperty(EPHEMERAL_MESSAGE_ID_FIELD)
+    private Integer ephemeralMessageId;
+    /**
+     * Optional.
+     * If the message to be replied to is from a different chat, unique identifier for the chat or username of the channel (in the format @channelusername)
+     * @apiNote Not supported for messages sent on behalf of a business account and messages from channel direct messages chats.
+     */
+    @JsonProperty(CHAT_ID_FIELD)
+    private String chatId;
+
+    /**
+     * Optional.
+     * Identifier of the specific checklist task to be replied to
+     */
+    @JsonProperty(CHECKLIST_TASK_ID_FIELD)
+    private Integer checklistTaskId;
+    /**
+     * Optional.
+     * Persistent identifier of the specific poll option to be replied to
+     */
+    @JsonProperty(POLL_OPTION_ID_FIELD)
+    private String pollOptionId;
+
+    /**
+     * Optional.
+     * Pass True if the message should be sent even if the specified message to be replied to is not found; can be used only for replies in the same chat and forum topic.
+     * @apiNote Always False for replies in another chat or forum topic.
+     * @apiNote Always True for messages sent on behalf of a business account.
+     */
+    @JsonProperty(ALLOW_SENDING_WITHOUT_REPLY_FIELD)
+    private Boolean allowSendingWithoutReply;
+    /**
+     * Optional.
+     * Quoted part of the message to be replied to; 0-1024 characters after entities parsing.
+     * The quote must be an exact substring of the message to be replied to, including bold, italic, underline, strikethrough, spoiler, custom_emoji, and date_time entities.
+     * The message will fail to send if the quote isn't found in the original message.
+     */
+    @JsonProperty(QUOTE_FIELD)
+    private String quote;
+    /**
+     *  Optional.
+     *  Mode for parsing entities in the quote. See formatting options for more details.
+     */
+    @JsonProperty(QUOTE_PARSE_MODE_FIELD)
+    private String quoteParseMode;
+    /**
+     *  Optional.
+     *  A JSON-serialized list of special entities that appear in the quote.
+     *  It can be specified instead of quote_parse_mode.
+     */
+    @JsonProperty(QUOTE_ENTITIES_FIELD)
+    @Singular
+    private List<MessageEntity> quoteEntities;
+    /**
+     *  Optional. Position of the quote in the original message in UTF-16 code units
+     */
+    @JsonProperty(QUOTE_POSITION_FIELD)
+    private Integer quotePosition;
+
+    public ReplyParameters(Integer messageId) {
+        this.messageId = messageId;
+    }
+
+    @Override
+    public void validate() throws TelegramApiValidationException {
+        if (messageId == null && ephemeralMessageId == null) {
+            throw new TelegramApiValidationException("Either messageId or ephemeralMessageId parameter must be provided", this);
+        }
+        if (chatId != null && chatId.isEmpty()) {
+            throw new TelegramApiValidationException("ChatId parameter can't be empty string", this);
+        }
+    }
+
+    public static class ReplyParametersBuilder {
+
+        @Tolerate
+        public ReplyParameters.ReplyParametersBuilder chatId(@NonNull Long chatId) {
+            this.chatId = chatId.toString();
+            return this;
+        }
+    }
+}

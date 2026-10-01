@@ -1,0 +1,385 @@
+package org.telegram.telegrambots.meta.api.methods.polls;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.Singular;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+import lombok.experimental.Tolerate;
+import lombok.extern.jackson.Jacksonized;
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
+import org.telegram.telegrambots.meta.api.objects.MessageEntity;
+import org.telegram.telegrambots.meta.api.objects.ReplyParameters;
+import org.telegram.telegrambots.meta.api.objects.polls.input.InputPollMedia;
+import org.telegram.telegrambots.meta.api.objects.polls.input.InputPollOption;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiValidationException;
+import org.telegram.telegrambots.meta.util.Validations;
+
+import java.util.List;
+
+/**
+ * @author Ruben Bermudez
+ * @version 1.0
+ * Use this method to send a native poll.
+ * A native poll can't be sent to a private chat.
+ * Polls can't be sent to channel direct messages chats.
+ * <p>
+ * On success, the sent Message is returned.
+ */
+@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+@Jacksonized
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class SendPoll extends BotApiMethodMessage {
+    public static final String PATH = "sendPoll";
+
+    private static final String CHAT_ID_FIELD = "chat_id";
+    private static final String MESSAGE_THREAD_ID_FIELD = "message_thread_id";
+    private static final String QUESTION_FIELD = "question";
+    private static final String OPTIONS_FIELD = "options";
+    private static final String IS_ANONYMOUS_FIELD = "is_anonymous";
+    private static final String TYPE_FIELD = "type";
+    private static final String ALLOW_MULTIPLE_ANSWERS_FIELD = "allows_multiple_answers";
+    private static final String CORRECT_OPTION_IDS_FIELD = "correct_option_ids";
+    private static final String ALLOWS_REVOTING_FIELD = "allows_revoting";
+    private static final String SHUFFLE_OPTIONS_FIELD = "shuffle_options";
+    private static final String ALLOW_ADDING_OPTIONS_FIELD = "allow_adding_options";
+    private static final String HIDE_RESULTS_UNTIL_CLOSES_FIELD = "hide_results_until_closes";
+    private static final String IS_CLOSED_FIELD = "is_closed";
+    private static final String DISABLE_NOTIFICATION_FIELD = "disable_notification";
+    private static final String REPLY_TO_MESSAGE_ID_FIELD = "reply_to_message_id";
+    private static final String REPLY_MARKUP_FIELD = "reply_markup";
+    private static final String OPEN_PERIOD_FIELD = "open_period";
+    private static final String CLOSE_DATE_FIELD = "close_date";
+    private static final String EXPLANATION_FIELD = "explanation";
+    private static final String EXPLANATION_PARSE_MODE_FIELD = "explanation_parse_mode";
+    private static final String EXPLANATION_ENTITIES_FIELD = "explanation_entities";
+    private static final String DESCRIPTION_FIELD = "description";
+    private static final String DESCRIPTION_PARSE_MODE_FIELD = "description_parse_mode";
+    private static final String DESCRIPTION_ENTITIES_FIELD = "description_entities";
+    private static final String ALLOW_SENDING_WITHOUT_REPLY_FIELD = "allow_sending_without_reply";
+    private static final String PROTECT_CONTENT_FIELD = "protect_content";
+    private static final String REPLY_PARAMETERS_FIELD = "reply_parameters";
+    private static final String BUSINESS_CONNECTION_ID_FIELD = "business_connection_id";
+    private static final String QUESTION_PARSE_MODE_FIELD = "question_parse_mode";
+    private static final String QUESTION_ENTITIES_FIELD = "question_entities";
+    private static final String MESSAGE_EFFECT_ID_FIELD = "message_effect_id";
+    private static final String ALLOW_PAID_BROADCAST_FIELD = "allow_paid_broadcast";
+    private static final String MEDIA_FIELD = "media";
+    private static final String EXPLANATION_MEDIA_FIELD = "explanation_media";
+    private static final String MEMBERS_ONLY_FIELD = "members_only";
+    private static final String COUNTRY_CODES_FIELD = "country_codes";
+
+    /**
+     * Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+     * A native poll can't be sent to a private chat.
+     * Polls can't be sent to channel direct messages chats.
+     */
+    @JsonProperty(CHAT_ID_FIELD)
+    @NonNull
+    private String chatId;
+    /**
+     * Unique identifier for the target message thread (topic) of the forum;
+     * for forum supergroups only
+     */
+    @JsonProperty(MESSAGE_THREAD_ID_FIELD)
+    private Integer messageThreadId;
+    /**
+     * Poll question, 1-300 characters
+     */
+    @JsonProperty(QUESTION_FIELD)
+    @NonNull
+    private String question;
+    /**
+     * A JSON-serialized list of 2-12 answer options
+     */
+    @JsonProperty(OPTIONS_FIELD)
+    @Singular
+    @NonNull
+    private List<InputPollOption> options;
+    /**
+     * Optional
+     * True, if the poll needs to be anonymous, defaults to True
+     */
+    @JsonProperty(IS_ANONYMOUS_FIELD)
+    private Boolean isAnonymous;
+    /**
+     * Optional
+     * Poll type, “quiz” or “regular”, defaults to “regular”
+     */
+    @JsonProperty(TYPE_FIELD)
+    private String type;
+    /**
+     * Optional
+     * True, if the poll allows multiple answers, defaults to False
+     */
+    @JsonProperty(ALLOW_MULTIPLE_ANSWERS_FIELD)
+    private Boolean allowMultipleAnswers;
+    /**
+     * Optional
+     * A JSON-serialized list of monotonically increasing 0-based identifiers of the correct answer options,
+     * required for polls in quiz mode
+     */
+    @JsonProperty(CORRECT_OPTION_IDS_FIELD)
+    private List<Integer> correctOptionIds;
+    /**
+     * Optional
+     * Pass True, if the poll allows to change chosen answer options, defaults to False for quizzes and to True for regular polls
+     */
+    @JsonProperty(ALLOWS_REVOTING_FIELD)
+    private Boolean allowsRevoting;
+    /**
+     * Optional
+     * Pass True, if the poll options must be shown in random order
+     */
+    @JsonProperty(SHUFFLE_OPTIONS_FIELD)
+    private Boolean shuffleOptions;
+    /**
+     * Optional
+     * Pass True, if answer options can be added to the poll after creation; not supported for anonymous polls and quizzes
+     */
+    @JsonProperty(ALLOW_ADDING_OPTIONS_FIELD)
+    private Boolean allowAddingOptions;
+    /**
+     * Optional
+     * Pass True, if poll results must be shown only after the poll closes
+     */
+    @JsonProperty(HIDE_RESULTS_UNTIL_CLOSES_FIELD)
+    private Boolean hideResultsUntilCloses;
+    /**
+     * Optional
+     * Pass True, if the poll needs to be immediately closed
+     */
+    @JsonProperty(IS_CLOSED_FIELD)
+    private Boolean isClosed;
+    /**
+     * Optional.
+     * Sends the message silently.
+     * Users will receive a notification with no sound.
+     */
+    @JsonProperty(DISABLE_NOTIFICATION_FIELD)
+    private Boolean disableNotification;
+    /**
+     * Optional.
+     * If the message is a reply, ID of the original message
+     */
+    @JsonProperty(REPLY_TO_MESSAGE_ID_FIELD)
+    private Integer replyToMessageId;
+    /**
+     * Optional.
+     * Additional interface options.
+     * A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard
+     * or to force a reply from the user.
+     */
+    @JsonProperty(REPLY_MARKUP_FIELD)
+    private ReplyKeyboard replyMarkup;
+    /**
+     * Optional.
+     * Amount of time in seconds the poll will be active after creation, 5-600. Can't be used together with close_date.
+     */
+    @JsonProperty(OPEN_PERIOD_FIELD)
+    private Integer openPeriod;
+    /**
+     * Optional. Point in time (Unix timestamp) when the poll will be automatically closed.
+     * Must be at least 5 and no more than 600 seconds in the future.
+     * Can't be used together with open_period.
+     */
+    @JsonProperty(CLOSE_DATE_FIELD)
+    private Integer closeDate;
+    /**
+     * Optional.
+     * Text that is shown when a user chooses an incorrect answer or taps on the lamp icon in a quiz-style poll,
+     * 0-200 characters with at most 2 line feeds after entities parsing
+     */
+    @JsonProperty(EXPLANATION_FIELD)
+    private String explanation;
+    /**
+     * Optional.
+     * Mode for parsing entities in the explanation.
+     * See formatting options for more details.
+     */
+    @JsonProperty(EXPLANATION_PARSE_MODE_FIELD)
+    private String explanationParseMode;
+    /**
+     * Optional
+     * A JSON-serialized list of special entities that appear in the poll explanation.
+     * It can be specified instead of explanation_parse_mode
+     */
+    @JsonProperty(EXPLANATION_ENTITIES_FIELD)
+    private List<MessageEntity> explanationEntities;
+    /**
+     * Optional
+     * Description of the poll to be sent, 0-1024 characters after entities parsing
+     */
+    @JsonProperty(DESCRIPTION_FIELD)
+    private String description;
+    /**
+     * Optional
+     * Mode for parsing entities in the poll description. See formatting options for more details.
+     */
+    @JsonProperty(DESCRIPTION_PARSE_MODE_FIELD)
+    private String descriptionParseMode;
+    /**
+     * Optional
+     * A JSON-serialized list of special entities that appear in the poll description,
+     * which can be specified instead of description_parse_mode
+     */
+    @JsonProperty(DESCRIPTION_ENTITIES_FIELD)
+    private List<MessageEntity> descriptionEntities;
+    /**
+     * Optional
+     * Pass True, if the message should be sent even if the specified replied-to message is not found
+     */
+    @JsonProperty(ALLOW_SENDING_WITHOUT_REPLY_FIELD)
+    private Boolean allowSendingWithoutReply;
+    /**
+     * Optional.
+     * Protects the contents of sent messages from forwarding and saving
+     */
+    @JsonProperty(PROTECT_CONTENT_FIELD)
+    private Boolean protectContent;
+    /**
+     * Optional
+     * Description of the message to reply to
+     */
+    @JsonProperty(REPLY_PARAMETERS_FIELD)
+    private ReplyParameters replyParameters;
+    /**
+     * Optional.
+     * Unique identifier of the business connection on behalf of which the message will be sent
+     */
+    @JsonProperty(BUSINESS_CONNECTION_ID_FIELD)
+    private String businessConnectionId;
+    /**
+     * Optional
+     * Mode for parsing entities in the question.
+     * See formatting options for more details.
+     * Currently, only custom emoji entities are allowed
+     */
+    @JsonProperty(QUESTION_PARSE_MODE_FIELD)
+    private String questionParseMode;
+    /**
+     * Optional
+     * A JSON-serialized list of special entities that appear in the poll question.
+     * It can be specified instead of question_parse_mode
+     */
+    @JsonProperty(QUESTION_ENTITIES_FIELD)
+    private List<MessageEntity> questionEntities;
+    /**
+     * Optional
+     * Unique identifier of the message effect to be added to the message
+     */
+    @JsonProperty(MESSAGE_EFFECT_ID_FIELD)
+    private String messageEffectId;
+    /**
+     * Optional
+     * Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars per message.
+     * The relevant Stars will be withdrawn from the bot's balance
+     */
+    @JsonProperty(ALLOW_PAID_BROADCAST_FIELD)
+    private Boolean allowPaidBroadcast;
+    /**
+     * Optional
+     * Media added to the poll description
+     */
+    @JsonProperty(MEDIA_FIELD)
+    private InputPollMedia media;
+    /**
+     * Optional
+     * Media added to the quiz explanation
+     */
+    @JsonProperty(EXPLANATION_MEDIA_FIELD)
+    private InputPollMedia explanationMedia;
+    /**
+     * Optional
+     * Pass True, if voting is limited to users who have been members of the chat where the poll is being sent for more than 24 hours; for channel chats only
+     */
+    @JsonProperty(MEMBERS_ONLY_FIELD)
+    private Boolean membersOnly;
+    /**
+     * Optional
+     * A JSON-serialized list of 0-12 two-letter ISO 3166-1 alpha-2 country codes indicating the countries from which users can vote in the poll;
+     * for channel chats only. If omitted or empty, then users from any country can participate in the poll.
+     */
+    @JsonProperty(COUNTRY_CODES_FIELD)
+    @Singular
+    private List<String> countryCodes;
+
+    @Tolerate
+    public void setChatId(@NonNull Long chatId) {
+        this.chatId = chatId.toString();
+    }
+
+    public void enableNotification() {
+        this.disableNotification = null;
+    }
+
+    public void disableNotification() {
+        this.disableNotification = true;
+    }
+
+    @Override
+    public String getMethod() {
+        return PATH;
+    }
+
+    @Override
+    public void validate() throws TelegramApiValidationException {
+        Validations.requiredChatId(chatId, this);
+        if (question.isEmpty()) {
+            throw new TelegramApiValidationException("Question parameter can't be empty", this);
+        }
+        if (openPeriod != null && closeDate != null) {
+            throw new TelegramApiValidationException("Only one of Open Period and Close Date are allowed", this);
+        }
+        if (openPeriod != null && (openPeriod < 5 || openPeriod > 2628000)) {
+            throw new TelegramApiValidationException("Open period can only be between 5 and 2628000", this);
+        }
+        if (explanation != null && explanation.length() > 200) {
+            throw new TelegramApiValidationException("Explanation can only have up to 200 characters", this);
+        }
+        if (options.size() < 1 || options.size() > 12) {
+            throw new TelegramApiValidationException("Options must be between 1 and 12", this);
+        }
+        for (InputPollOption option : options) {
+            option.validate();
+        }
+        if (explanationParseMode != null && (explanationEntities != null && !explanationEntities.isEmpty())) {
+            throw new TelegramApiValidationException("Explanation Parse mode can't be enabled if Entities are provided", this);
+        }
+        if (questionParseMode != null && (questionEntities != null && !questionEntities.isEmpty())) {
+            throw new TelegramApiValidationException("Question Parse mode can't be enabled if Entities are provided", this);
+        }
+        if (descriptionParseMode != null && (descriptionEntities != null && !descriptionEntities.isEmpty())) {
+            throw new TelegramApiValidationException("Description Parse mode can't be enabled if Entities are provided", this);
+        }
+        if (replyMarkup != null) {
+            replyMarkup.validate();
+        }
+        if (replyParameters != null) {
+            replyParameters.validate();
+        }
+    }
+
+    public static abstract class SendPollBuilder<C extends SendPoll, B extends SendPollBuilder<C, B>> extends BotApiMethodMessageBuilder<C, B> {
+        @Tolerate
+        public SendPollBuilder<C, B> chatId(@NonNull Long chatId) {
+            this.chatId = chatId.toString();
+            return this;
+        }
+    }
+}
